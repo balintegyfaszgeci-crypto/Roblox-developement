@@ -1,0 +1,104 @@
+You are building an original Roblox game in Roblox Studio using Luau. You have Roblox Studio MCP access and access to a large local GitHub reference repository containing scripts, UI, visuals, and examples. Inspect the current Studio project and repository before changing anything.
+
+## Goal
+
+Create a full, polished game heavily inspired by the broad gameplay loop of “Roll a Stickman”: low-attention AFK-friendly grinding, automatic wave combat, collectible units obtained through high-volume RNG rolls, long-term upgrades, and multiple modes. Give the game an original name, identity, setting, units, enemies, art, icons, effects, and UI details. Do not copy the original game's branding or proprietary assets, and do not use third-party anime characters. The visual tone may combine fantasy, sci-fi, and cartoon elements.
+
+The target player can leave an automatic battle running with little attention, while still having meaningful systems to manage and long-term collection goals. Make early progression feel rewarding and build a substantial endgame. Keep RNG odds and paid offers clear and accurate. Implement legitimate in-game automation; do not simulate user input or bypass Roblox idle-disconnect behavior.
+
+## Before coding
+
+1. Inspect the existing Roblox Studio place, hierarchy, scripts, assets, and conventions through Studio MCP. Do not delete or replace existing work.
+2. Inspect the reference repository efficiently: read its README, structure, license/attribution information, and relevant examples. Reuse only content whose license permits the intended use; otherwise create original work or a placeholder. Public availability alone is not proof of reuse rights.
+3. Report what you found and propose a safe modular structure. If a tool or repository is unavailable, say so and continue only where safe.
+4. Do not dump the whole repository into context. Search selectively and explain which references informed implementation.
+
+## Build and verification plan
+
+The eventual target is a full game, but deliver it in tested playable milestones, not one giant unverified code dump. First make an end-to-end vertical slice: join/save, roll for units, form a five-unit team, auto-battle stages, earn rewards, and spend them on progression. Then add the remaining modes and systems with shared architecture. Keep balance values in configuration modules. After each milestone, run available Studio play checks, inspect Output, fix errors, and summarize what works, what remains, assumptions, and manual setup. Do not claim a feature works without verifying it.
+
+Use a maintainable modular structure separating server-authoritative logic, shared configuration/types, client UI/effects, persistence, and developer tools. Do not block on missing balance details: use clearly labeled, configurable placeholders and list open decisions.
+
+## Combat, team, units, and RNG
+
+- Automatic turn-based combat: party members and enemies take turns; units use basic attacks, abilities, automatic targeting, and status effects. Show readable combat feedback. The screenshot turn counter reached 250; make turn limits configurable.
+- Unit stats include health, damage, speed, range, and role. Roles include tanks, melee, ranged, healer, support, and summoner. Front slots matter: melee units may not reach from later positions. Explain invalid placement. Some enemies/abilities can target back-line units.
+- Include bosses at regular configurable milestones (reference: every 10 stages). Difficulty scales enemy HP, damage, and abilities. Players may change their team during a run; changes take effect on the next stage.
+- Teams have 5 slots and players have 5 saved decks. Support selecting a deck, drag reordering, Equip Best, team power display, saved base per deck, and clear reach/role constraints. Collection UI should include search, class/type filters, sorting by power, rarity/mutation labels, favorite/lock, and detailed unit cards.
+- Units have original characters and rarity tiers such as Common, Uncommon, Rare, Epic, Legendary, Mythic, and Secret, plus Gold, Rainbow, and Void variants/mutations. Use original data and artwork. Every unit must be obtainable through play.
+- Rolling supports single, batch, and auto-roll from the start, with an editable batch size and responsive large-batch summaries. Do not create one object or network message per result. Show odds and all applicable luck effects. Use configurable banners/event pools and transparent pity systems for rolls and traits; never invent final odds as fact.
+- A duplicate of the same exact variant levels up that unit rather than creating another copy of that variant. Different variants can be separate. Level-up tomes can raise units to a configurable level cap (reference: level 21); duplicate copies can raise them beyond it. Support Level Up All from spare copies.
+- Traits can be rerolled with consumables. Reference trait tiers: Common, Rare, Epic, Legendary, Divine, Ascendant. Show pity counters (example screenshot: Epic+ guaranteed in 12, Legendary+ in 85) as configurable values.
+- Pets can give modest configurable luck/reward bonuses. Artifacts/gear from raids and other modes can affect combat or rolls.
+
+## Progression and rewards
+
+Account XP levels grant stat points. The reference upgrade screen shows:
+- Luck (10,000 max; sample x301 multiplier)
+- Haul: rolls from play (+30.44% at 3,044/10,000)
+- Roll Speed (+100% at 50/50)
+- Border Chance: Gold/Rainbow/Void odds (+80% at 80/80)
+- Potion Duration (+60% at 60/60)
+
+It also shows a Reset button with “x8 owned,” but its effect is unknown. Do not invent a rebirth/prestige mechanic; leave its behavior configurable/unimplemented pending clarification.
+
+Implement a lifetime-roll Mastery track with permanent bonuses and next-rank previews (reference: 34/45, +170% luck forever, next rank +5%). Add permanent upgrades, Tower perks, Luck Index, Gear, Guild, invites, group, passes, VIP, pets, temporary potions, friends bonus, and rotating Moon/Eclipse event multipliers. Show a luck breakdown separating permanent and active sources and the final multiplier. A reference account showed sources including Upgrades x301, Mastery x2.7, Tower perks x1.14, Luck Index x1.73, Gear x2.92, Guild x1.17, Invites x1.08, Group x1.05, Lucky pass x1.5, VIP x1.1, Pets x1.34, active Luck potion x2, friends x1.1, Eclipse x5, total x150,786. Use an explicit configurable formula and never hide changed odds.
+
+Currencies and rewards can include Rolls, Gems, Luck/Clovers, lifetime Roll/Dice count, Moon/Luck potions, trait rerolls, Base Keys, Dungeon Tickets, raid currency, and event currencies. Rolls are earned from stages and may be bought with Gems; Gems are earnable in play and can be sold for Robux. Add daily rewards, playtime rewards, quests, redeemable codes, optional achievements, leaderboards, and ranked seasons. Save progression and claim state.
+
+Include a home/base system with rooms giving modest account bonuses (for example, extra XP), plus permanent upgrades, artifacts, and gear. Do not add rebirth/prestige unless approved.
+
+## Game modes
+
+Implement all requested modes using shared combat and data-driven mode/reward configuration:
+
+1. Story: solo campaign through stages/chapters/worlds. Resume at the latest completed stage and do not replay earlier stages by default. Award first-clear Gems on boss milestones only once; stages can award rolls. Exact Story milestone details are not shown in the references, so use placeholders.
+2. Tower: increasing difficulty by floor. Defeat resets the run to the selected unlocked checkpoint. Example milestones unlock restart floors 11, 21, 31, 41, 51 as progress advances. Give Base Keys, permanent luck/roll-speed bonuses, and artifacts at milestones.
+3. Endless: endless stage farming, mainly for rolls, with configurable scaling rewards and milestones. Defeat returns to the chosen unlocked restart point.
+4. Seasonal event: a custom mode, event currency, limited event units/pets, shop, and optional battle pass. Use an original event theme placeholder.
+5. Arena: asynchronous PvP against saved player teams, rank tiers/seasons, and a configurable regenerating attempt system (reference: 15 entries, one every 6 minutes).
+6. Dungeons: 6 stages with a boss on stage 6, 3 configurable variants, solo and co-op, regenerating tickets (reference: one every 4 hours). Scale co-op difficulty.
+7. Raids: whole-server co-op boss encounters, configurable schedule (reference every 30 minutes), server-shared boss state, contribution tracking, and rewards. Auto Raid can be an optional perk but must not award participation rewards to absent players.
+8. Expeditions: 6 configurable types, assign units for timed rewards that progress offline. Optional Auto Expedition can reuse the saved team. Confirm cancellation before forfeiting rewards.
+
+Players may run expeditions alongside one main mode. They cannot farm Tower and Endless at once; Arena pauses the current farming mode. Co-op parties support up to 4. Story is solo. Co-op difficulty scales with participants/team power and all active participants receive the same stage reward. If a player disconnects, remove their team and safely recalculate enemy strength. Players may join friends mid-run where supported.
+
+## Screenshot-confirmed mode rewards
+
+Treat these as example reference values, not final balance. Build all milestone tables from data, not hard-coded UI logic.
+
+- Tower screenshot: best floor 349, restart point 151. Example milestone rewards: floor 25 Base Key +2% permanent luck; floor 50 Base Key +3% permanent roll speed; floor 75 Base Key +2% luck; floor 100 checkpoint at 51, Base Key, Spire Shard artifact (+20% roll speed and +3% roll speed permanently). Checkpoint examples include restarting at 11, 21, 31, 41, 51.
+- Endless screenshot: best wave 309, restart at 151. Wave 25: Base Key, 250 rolls, 5 Moon potions. Wave 50: Base Key, 500 rolls, 10 Moon potions. Wave 75: Base Key, 750 rolls, 15 Moon potions. Wave 100: checkpoint at 51, Base Key, Night Lantern artifact (shown +30% luck), 1,000 rolls, 20 Moon potions. Wave 125: Base Key, 1,250 rolls, 25 Moon potions.
+- Haunted Night screenshot: best wave 309, restart at 151. Wave 25: 1,500 candy +2 lanterns; 50: 3,000 candy +4 lanterns; 75: 4,500 candy +6 lanterns; 100: 6,000 candy +8 lanterns + pumpkin egg; 125: 7,500 candy +10 lanterns. Checkpoints follow the same general pattern.
+- Players can select start and end floor/wave and end a run manually. Rewards are granted as stages complete, not only when the whole run ends.
+
+## Bases
+
+Bases are collectible/upgradable passive battle modifiers. The screenshot shows a free key daily, milestones, shop, multi-open buttons, visible odds, rarity, effect descriptions, levels, Wear, and repeat/base level-up. Support a configurable pool and base per deck. Sample table:
+- Frost Citadel: Common, 33.5%, 9% freeze on hit.
+- Ember Forge: Common, 30%, 14% burn on hit.
+- Tidewall Keep: Rare, 18%, 22% starting shield.
+- Sunspire Temple: Rare, 10%, +14% attack, +9% health.
+- Shadow Bastion: Epic, 5%, +8% attack, +19% crit.
+- Starfall Observatory: Legendary, 1.8%, +19% speed, +13% crit, 6% freeze on hit.
+- Dragon Throne: Mythic, 0.2% (1 in 500), +10% attack, 10% burn, first-to-fall revival.
+- Limited Hallow Keep: 1.5%, +10% attack, 6% pumpkin effect, first-to-fall revival.
+Make sample odds/effects configurable and ensure actual odds sum correctly. Shop key packs can use diminishing bundle prices/bonus quantities, but all prices must be displayed and server-validated.
+
+## Raids, raid shop, and season pass
+
+Raid reference: whole-server encounter every 30 minutes, with rotating bosses; every fourth raid is Hard with x3 rewards. Contribution thresholds at 25%, 50%, 75%, and Kill stack rewards. Show progress, raid currency, rolls, consumables, MVP bonus, and “full for all” status. Use configurable thresholds/rewards. Raid shop can include raid-exclusive unit variants and trait rerolls/potions, with original names/art.
+
+The reference shop passes include concepts such as x1.5 luck, 25% faster rolls, higher battle speeds, 50% longer potions, VIP daily chest/cosmetics, and Auto Raid. Use original pass names, configurable benefits, exact purchase disclosure, and server-side receipt validation. Auto-roll is free. Gems may be purchased for Robux and earned in-game. Optional gift-gems flow must use a secure purchase/recipient workflow; do not transfer Robux between users. Do not create real product IDs or publish/configure monetization without supplied IDs.
+
+The seasonal roll pass has Free and Premium reward tracks, progress from rolls, an end timer, and post-track bonus tiers. Reference: 50 normal tiers and then a bonus tier every 120,000 rolls. Build configurable rewards, accurate progress, server-validated claims, and original branding. Featured daily offers/VIP rewards/supporter subscriptions can be configurable. Avoid false scarcity or misleading countdowns.
+
+## UI, accessibility, and tech
+
+Reference screenshot hierarchy: persistent top resource/account bar; mode navigation; run controls/milestones on left; center battle scene with boss/wave/turn info; team cards near bottom; roll and auto-roll controls lower-right; detailed panels for upgrades, luck, bases, raids, pass, and collection. Make an original interface with similar clarity, not a copied skin. Support PC, mobile, tablet, and controller. Include scalable text, reduced-flash mode, colorblind-friendly indicators, animation controls, settings, subtle music, and sound effects; no voice lines.
+
+Save all data: units/levels/duplicates/traits, currencies/consumables, pets, gear/artifacts, upgrades/mastery, bases, home, settings, quests/milestones, loadouts/decks, current run where feasible, PvP/rank data, expeditions, and purchases. Use schema versioning, safe retries, and idempotent purchase/reward handling. Clearly document what cannot resume after a disconnect.
+
+Server-authoritatively validate rolls, odds, currency, combat, rewards, drops, purchases, gifting, and all remote events. Add rate limits and sanity checks. Design for broad device support, low-end mobile, and up to 16 players per server. Avoid excessive per-frame work, replication, and per-roll network traffic.
+
+Create developer-only tools protected by server authorization: grant test resources, set level/stage, spawn test enemies, simulate rewards, and inspect test data. Document project structure, setup, balancing/configuration, monetization IDs, tests, assumptions, asset licenses, limitations, and next steps. Start by reporting inspection findings, then build and verify the first playable vertical slice.
